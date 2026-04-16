@@ -775,10 +775,17 @@
       display: flex;
       align-items: center;
       background-color: var(--navy);
-      background-image: url('https://images.assets-landingi.com/uc/cae4bd26-f710-4a74-b2dd-057d4ff13a00/WhatsAppImage20240619at80121AM.png');
-      background-size: cover;
-      background-position: center;
       padding: 100px 0 80px;
+      overflow: hidden;
+    }
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
     }
     .hero::before {
       content: '';
@@ -790,8 +797,9 @@
         rgba(8, 20, 34, 0.55) 60%,
         rgba(8, 20, 34, 0.25) 100%
       );
+      z-index: 1;
     }
-    .hero .container { position: relative; z-index: 1; }
+    .hero .container { position: relative; z-index: 2; }
     .hero-inner {
       max-width: 640px;
     }
@@ -876,6 +884,9 @@
 
   <!-- 2. HERO -->
   <section class="hero">
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="Film%20Big%20Data%20jacht.mp4" type="video/mp4">
+    </video>
     <div class="container">
       <div class="hero-inner">
         <img
