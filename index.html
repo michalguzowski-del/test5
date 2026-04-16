@@ -106,6 +106,68 @@
     }
 
     /* ============================================================
+       SWIPE GALLERY (mobile)
+    ============================================================ */
+    @media (max-width: 768px) {
+      .gallery-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+        padding-bottom: 12px;
+        cursor: grab;
+      }
+      .gallery-grid:active { cursor: grabbing; }
+      .gallery-grid::-webkit-scrollbar { height: 4px; }
+      .gallery-grid::-webkit-scrollbar-track { background: #e6eef5; border-radius: 2px; }
+      .gallery-grid::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 2px; }
+      .gallery-item {
+        flex: 0 0 78vw;
+        max-width: 320px;
+        scroll-snap-align: start;
+        aspect-ratio: 4/3;
+      }
+      .swipe-hint {
+        text-align: center;
+        font-size: 0.78rem;
+        color: var(--gray);
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+    }
+    @media (min-width: 769px) {
+      .swipe-hint { display: none; }
+    }
+
+    /* ============================================================
+       SWIPE CREW (mobile)
+    ============================================================ */
+    @media (max-width: 768px) {
+      .crew-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 16px;
+        padding-bottom: 12px;
+      }
+      .crew-grid::-webkit-scrollbar { height: 4px; }
+      .crew-grid::-webkit-scrollbar-track { background: #e6eef5; border-radius: 2px; }
+      .crew-grid::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 2px; }
+      .crew-card {
+        flex: 0 0 72vw;
+        max-width: 280px;
+        scroll-snap-align: start;
+      }
+    }
+
+    /* ============================================================
        13. FOOTER
     ============================================================ */
     .footer {
@@ -1059,6 +1121,7 @@
           <img src="https://images.assets-landingi.com/uc/988320dd-fe78-4ad3-abc2-b40c383dd01e/5746f6a647214515b958b2175b8e73d9.JPG" alt="Big Data Yacht experience 6" onerror="this.style.background='#d4e8f3';this.removeAttribute('src')" />
         </div>
       </div>
+      <p class="swipe-hint">&#8592; swipe to see more &#8594;</p>
     </div>
   </section>
 
