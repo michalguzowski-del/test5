@@ -289,7 +289,9 @@
       color: rgba(255,255,255,0.75);
     }
     .form-field input[type="text"],
-    .form-field input[type="email"] {
+    .form-field input[type="email"],
+    .form-field textarea,
+    .form-field select {
       background: transparent;
       border: none;
       border-bottom: 2px solid rgba(255,255,255,0.45);
@@ -301,8 +303,25 @@
       transition: border-color var(--transition);
       width: 100%;
     }
-    .form-field input::placeholder { color: rgba(255,255,255,0.45); }
-    .form-field input:focus { border-bottom-color: var(--white); }
+    .form-field select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.6)' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 4px center;
+      cursor: pointer;
+    }
+    .form-field select option { background: var(--blue); color: var(--white); }
+    .form-field textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.55;
+    }
+    .form-field input::placeholder,
+    .form-field textarea::placeholder { color: rgba(255,255,255,0.45); }
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus { border-bottom-color: var(--white); }
     .date-label {
       font-size: 0.88rem;
       font-weight: 600;
@@ -1096,6 +1115,27 @@
         </div>
 
         <div class="form-field">
+          <label for="companyType">Company type *</label>
+          <select id="companyType" name="companyType" required>
+            <option value="" disabled selected>Select your company type</option>
+            <option value="Brand / Advertiser">Brand / Advertiser</option>
+            <option value="Media Agency">Media Agency</option>
+            <option value="Creative Agency">Creative Agency</option>
+            <option value="Publisher / Media Owner">Publisher / Media Owner</option>
+            <option value="Ad Tech / Mar Tech">Ad Tech / Mar Tech</option>
+            <option value="Data Provider">Data Provider</option>
+            <option value="Consultancy">Consultancy</option>
+            <option value="Retail / E-commerce">Retail / E-commerce</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="reason">Why do you want to join the Yacht Experience? *</label>
+          <textarea id="reason" name="reason" placeholder="Tell us briefly why you'd like to join and what topics you're most interested in..." required></textarea>
+        </div>
+
+        <div class="form-field">
           <label for="linkedin">LinkedIn profile</label>
           <input type="text" id="linkedin" name="linkedin" placeholder="linkedin.com/in/yourprofile" />
         </div>
@@ -1148,16 +1188,82 @@
     </div>
   </footer>
 
+  <!--
+  =====================================================================
+  GOOGLE APPS SCRIPT SETUP
+  =====================================================================
+  1. Open the Google Sheet:
+     https://docs.google.com/spreadsheets/d/1rMzeNW81o72eP1ZjA2aVQJp5dvIStiXr219_8O3qqj0/edit
+  2. Extensions → Apps Script → paste the code below → Save
+  3. Deploy → New deployment → Web app
+     Execute as: Me | Who has access: Anyone
+  4. Copy the deployment URL and paste it as APPS_SCRIPT_URL below
+  =====================================================================
+  --- PASTE INTO APPS SCRIPT ---
+
+  function doPost(e) {
+    try {
+      var data = JSON.parse(e.postData.contents);
+      var sheet = SpreadsheetApp.openById('1rMzeNW81o72eP1ZjA2aVQJp5dvIStiXr219_8O3qqj0').getActiveSheet();
+
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(['Timestamp','Full Name','Company Email','Company Name','Job Title','Company Type','Why Join','LinkedIn','Dates','GDPR']);
+      }
+
+      sheet.appendRow([
+        new Date(),
+        data.fullName,
+        data.companyEmail,
+        data.companyName,
+        data.jobTitle,
+        data.companyType,
+        data.reason,
+        data.linkedin,
+        data.dates,
+        'Yes'
+      ]);
+
+      MailApp.sendEmail({
+        to: 'michal.guzowski@onaudience.com',
+        subject: 'New Big Data Yacht Registration — ' + data.fullName + ' (' + data.companyName + ')',
+        htmlBody:
+          '<h2>New registration</h2>' +
+          '<table cellpadding="8" style="border-collapse:collapse;font-family:sans-serif">' +
+          '<tr><td><b>Full Name</b></td><td>' + data.fullName + '</td></tr>' +
+          '<tr><td><b>Company Email</b></td><td>' + data.companyEmail + '</td></tr>' +
+          '<tr><td><b>Company Name</b></td><td>' + data.companyName + '</td></tr>' +
+          '<tr><td><b>Job Title</b></td><td>' + data.jobTitle + '</td></tr>' +
+          '<tr><td><b>Company Type</b></td><td>' + data.companyType + '</td></tr>' +
+          '<tr><td><b>Why Join</b></td><td>' + data.reason + '</td></tr>' +
+          '<tr><td><b>LinkedIn</b></td><td>' + data.linkedin + '</td></tr>' +
+          '<tr><td><b>Dates</b></td><td>' + data.dates + '</td></tr>' +
+          '</table>'
+      });
+
+      return ContentService.createTextOutput(JSON.stringify({status:'ok'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch(err) {
+      return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.message}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
+  =====================================================================
+  -->
+
   <script>
-    // Form submission handler
+    // ↓ Paste your Apps Script deployment URL here after setup
+    var APPS_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+
     (function () {
       var form = document.getElementById('regForm');
       var success = document.getElementById('formSuccess');
+      var submitBtn = form.querySelector('.reg-submit');
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // Validate required text/email fields
+        // Validate required fields
         var required = form.querySelectorAll('[required]');
         var valid = true;
         required.forEach(function (el) {
@@ -1169,19 +1275,47 @@
             else { el.style.borderBottomColor = ''; }
           }
         });
-
         if (!valid) return;
 
-        // Show success
-        form.style.display = 'none';
-        success.style.display = 'block';
+        // Collect selected dates
+        var dates = Array.from(form.querySelectorAll('input[name="dates"]:checked'))
+          .map(function(cb) { return cb.value; }).join(', ');
+
+        var payload = {
+          fullName:      document.getElementById('fullName').value.trim(),
+          companyEmail:  document.getElementById('companyEmail').value.trim(),
+          companyName:   document.getElementById('companyName').value.trim(),
+          jobTitle:      document.getElementById('jobTitle').value.trim(),
+          companyType:   document.getElementById('companyType').value,
+          reason:        document.getElementById('reason').value.trim(),
+          linkedin:      document.getElementById('linkedin').value.trim(),
+          dates:         dates
+        };
+
+        // Disable button while sending
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+
+        if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+          fetch(APPS_SCRIPT_URL, {
+            method:  'POST',
+            mode:    'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body:    JSON.stringify(payload)
+          }).catch(function(){});
+        }
+
+        // Show success immediately (no-cors = can't read response)
+        setTimeout(function () {
+          form.style.display = 'none';
+          success.style.display = 'block';
+        }, 400);
       });
 
-      // Clear red border on input
-      form.querySelectorAll('input[type="text"], input[type="email"]').forEach(function (el) {
-        el.addEventListener('input', function () {
-          if (el.value.trim()) el.style.borderBottomColor = '';
-        });
+      // Clear error highlight on change
+      form.querySelectorAll('input[type="text"], input[type="email"], textarea, select').forEach(function (el) {
+        el.addEventListener('input', function () { if (el.value.trim()) el.style.borderBottomColor = ''; });
+        el.addEventListener('change', function () { if (el.value) el.style.borderBottomColor = ''; });
       });
     })();
   </script>
