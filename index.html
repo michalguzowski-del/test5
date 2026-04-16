@@ -106,68 +106,6 @@
     }
 
     /* ============================================================
-       SWIPE GALLERY (mobile)
-    ============================================================ */
-    @media (max-width: 768px) {
-      .gallery-grid {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        gap: 12px;
-        padding-bottom: 12px;
-        cursor: grab;
-      }
-      .gallery-grid:active { cursor: grabbing; }
-      .gallery-grid::-webkit-scrollbar { height: 4px; }
-      .gallery-grid::-webkit-scrollbar-track { background: #e6eef5; border-radius: 2px; }
-      .gallery-grid::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 2px; }
-      .gallery-item {
-        flex: 0 0 78vw;
-        max-width: 320px;
-        scroll-snap-align: start;
-        aspect-ratio: 4/3;
-      }
-      .swipe-hint {
-        text-align: center;
-        font-size: 0.78rem;
-        color: var(--gray);
-        margin-top: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-      }
-    }
-    @media (min-width: 769px) {
-      .swipe-hint { display: none; }
-    }
-
-    /* ============================================================
-       SWIPE CREW (mobile)
-    ============================================================ */
-    @media (max-width: 768px) {
-      .crew-grid {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        gap: 16px;
-        padding-bottom: 12px;
-      }
-      .crew-grid::-webkit-scrollbar { height: 4px; }
-      .crew-grid::-webkit-scrollbar-track { background: #e6eef5; border-radius: 2px; }
-      .crew-grid::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 2px; }
-      .crew-card {
-        flex: 0 0 72vw;
-        max-width: 280px;
-        scroll-snap-align: start;
-      }
-    }
-
-    /* ============================================================
        13. FOOTER
     ============================================================ */
     .footer {
@@ -874,6 +812,57 @@
       margin-bottom: 36px;
       line-height: 1.7;
     }
+    /* ============================================================
+       SWIPE — CREW, GALLERY, DETAILS, WHY (mobile) — must be last
+    ============================================================ */
+    @media (max-width: 768px) {
+      /* CREW — jeden kafelek na raz */
+      .crew-grid {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch;
+        gap: 16px;
+        padding-bottom: 12px;
+        grid-template-columns: unset !important;
+      }
+      .crew-grid::-webkit-scrollbar { height: 4px; }
+      .crew-grid::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 2px; }
+      .crew-card {
+        flex: 0 0 80vw !important;
+        max-width: 300px !important;
+        scroll-snap-align: start;
+        background: var(--blue) !important;
+        display: flex;
+        flex-direction: column;
+      }
+      .crew-photo-wrap { flex: 1; }
+
+      /* GALLERY */
+      .gallery-grid {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+        padding-bottom: 12px;
+        cursor: grab;
+        grid-template-columns: unset !important;
+      }
+      .gallery-grid:active { cursor: grabbing; }
+      .gallery-grid::-webkit-scrollbar { height: 4px; }
+      .gallery-grid::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 2px; }
+      .gallery-item {
+        flex: 0 0 80vw !important;
+        max-width: 320px !important;
+        scroll-snap-align: start;
+        aspect-ratio: 4/3;
+      }
+      .swipe-hint { display: flex; }
+    }
+    @media (min-width: 769px) { .swipe-hint { display: none; } }
   </style>
 </head>
 <body>
